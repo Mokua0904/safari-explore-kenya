@@ -12,13 +12,20 @@ import reviewRoute from "./routes/reviews.js";
 import bookingRoute from "./routes/bookings.js";
 import hotelRoute from "./routes/hotel.js";
 import transportRoute from "./routes/transport.js";
-import productRoute from "./routes/product.js"; // <-- THE FIX IS HERE
+import productRoute from "./routes/product.js";
 
 const app = express();
-const port = 5000;
+// Render provides a dynamic port. Fallback to 5000 for local development.
+const port = process.env.PORT || 5000;
 
+// CORS Configuration: Allow localhost AND your future Vercel frontend
 const corsOptions = {
-  origin: "http://localhost:3000", 
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://192.168.0.15:3000", // Your mobile testing IP
+    process.env.FRONTEND_URL // We will add this to Render later!
+  ].filter(Boolean), 
   credentials: true,
 };
 
@@ -46,7 +53,7 @@ app.use("/api/v1/transport", transportRoute);
 app.use("/api/v1/products", productRoute); 
 
 app.get("/", (req, res) => {
-  res.send("API is running");
+  res.send("Safari Explore Kenya API is running!");
 });
 
 app.listen(port, () => {
