@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60" width="100%" height="100%">
+  <!-- The Horizon/Compass Line -->
+  <line x1="10" y1="45" x2="210" y2="45" stroke="#ffb703" stroke-width="1.5" opacity="0.6"/>
+  
+  <!-- The Wordmark -->
+  <text x="10" y="30" font-family="Georgia, serif" font-weight="bold" font-size="24" fill="#ffffff" letter-spacing="4">SAFARI</text>
+  
+  <!-- The Subtitle -->
+  <text x="12" y="56" font-family="Montserrat, sans-serif" font-weight="600" font-size="8" fill="#ffb703" letter-spacing="6">EXPLORE KENYA</text>
+  
+  <!-- Minimalist Icon (A subtle circle for the sun) -->
+  <circle cx="190" cy="25" r="10" fill="none" stroke="#ffb703" stroke-width="1.5"/>
+  <circle cx="190" cy="25" r="4" fill="#ffb703"/>
+</svg>

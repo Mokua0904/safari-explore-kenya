@@ -1,0 +1,126 @@
+/* ===============================
+   PREMIUM SUPER APP HEADER (SAFARI EXPLORE KENYA)
+   =============================== */
+
+.header {
+  width: 100%;
+  height: 80px;
+  line-height: 80px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: all 0.4s ease-in-out;
+  /* Dark gradient so the white/gold logo shows up */
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.8) 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* When scrolled, make it solid dark */
+.sticky__header {
+  height: 70px;
+  line-height: 70px;
+  background: #0f172a; /* Solid Dark Navy */
+}
+
+/* Logo sizing */
+.logo img {
+  object-fit: contain;
+  height: 45px;
+}
+
+/* NAVIGATION LINKS */
+.navigation .menu {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.nav__item a {
+  text-decoration: none;
+  color: #f8f9fa; /* Off-white */
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Hover and Active Link Color (Premium Gold) */
+.nav__item a:hover,
+.nav__item a.active__link {
+  color: #ffb703; 
+}
+
+/* MOBILE MENU TOGGLE BUTTON */
+.mobile__menu {
+  font-size: 1.8rem;
+  cursor: pointer;
+  display: none;
+  background: transparent;
+  border: none;
+  color: #fff;
+  z-index: 1001;
+}
+
+/* ===============================
+   RESPONSIVE DESIGN (MOBILE)
+   =============================== */
+@media only screen and (max-width: 992px) {
+  /* 1. Fix the header layout for mobile so it doesn't overlap */
+  .header {
+    position: absolute; /* Not fixed, so it scrolls with the page */
+    background: #0f172a; /* Solid dark background */
+  }
+
+  /* 2. Show the hamburger button */
+  .mobile__menu {
+    display: block;
+  }
+
+  /* 3. Hide desktop links on mobile */
+  .navigation .menu {
+    display: none;
+  }
+  
+  /* Hide login buttons on mobile, they will be handled in the menu */
+  .nav__btns {
+    display: none !important; 
+  }
+
+  /* 4. The Dropdown Menu Styling */
+  .mobile-dropdown {
+    position: absolute;
+    top: 80px; /* Drops right below the header */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px 0;
+    z-index: 9999;
+    border-top: 3px solid #ffb703;
+  }
+
+  .mobile-menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .mobile-link {
+    display: block;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a !important;
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+  }
+
+  .mobile-link:hover, 
+  .mobile-link.active {
+    color: #ffb703 !important;
+  }
+}

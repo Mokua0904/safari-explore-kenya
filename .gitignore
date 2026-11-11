@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Environment Variables (DO NOT UPLOAD THESE)
+.env
+.env.local
+backend/.env
+frontend/.env
+
+# Production Builds
+build/
+dist/
+frontend/build/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
