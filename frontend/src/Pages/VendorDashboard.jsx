@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Container, Row, Col, Table, Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Label, Input } from "reactstrap";
 import { AuthContext } from "../context/AuthContext";
 import { BASE_URL } from "../utils/config";
 import { useNavigate } from "react-router-dom";
 
-// Helper to prevent infinite hanging
 const fetchWithTimeout = (url, options = {}) => {
   return Promise.race([
     fetch(url, options),
@@ -26,13 +25,12 @@ const VendorDashboard = () => {
 
   const [modal, setModal] = useState(false);
   const toggleModal = () => {
-    if (modal) setEditingId(null); // Clear editing state when closing
+    if (modal) setEditingId(null); 
     setModal(!modal);
   };
   
-  // Form State
   const [listingType, setListingType] = useState("hotel");
-  const [editingId, setEditingId] = useState(null); // Tracks if we are editing
+  const [editingId, setEditingId] = useState(null); 
   const [newListing, setNewListing] = useState({ 
     title: "", city: "", address: "", desc: "",
     price: "", pricePerNight: "", capacity: "", type: "", maxGroupSize: "", stock: "", category: "",
@@ -45,14 +43,14 @@ const VendorDashboard = () => {
     }
   }, [user, navigate]);
 
-  const fetchVendorData = async () => {
+  // 🆕 Wrapped in useCallback to fix the Vercel ESLint error
+  const fetchVendorData = useCallback(async () => {
     setLoading(true);
     setError(null);
     
     try {
       const myId = user._id || user.id;
 
-      // 1. Fetch Bookings
       try {
         const bookingsRes = await fetchWithTimeout(`${BASE_URL}/booking`, { credentials: "include" });
         const bookingsData = await bookingsRes.json();
@@ -63,7 +61,6 @@ const VendorDashboard = () => {
         console.error("Bookings fetch failed", err);
       }
 
-      // 2. Fetch Listings
       const endpoints = ["hotels", "tours", "transport", "products"];
       let allListings = [];
 
@@ -74,7 +71,6 @@ const VendorDashboard = () => {
           
           if (data.success && data.data) {
             const myItems = data.data.filter((item) => String(item.vendorId) === String(myId));
-            // Use itemType to avoid overwriting the transport 'type' field
             allListings = [...allListings, ...myItems.map(item => ({ ...item, itemType: endpoint }))];
           }
         } catch (err) {
@@ -89,16 +85,15 @@ const VendorDashboard = () => {
     } finally {
       setLoading(false); 
     }
-  };
+  }, [user]); // Dependencies for useCallback
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // 🆕 Clean useEffect
   useEffect(() => {
     if (user && (user.role === "vendor" || user.role === "admin")) {
       fetchVendorData();
     }
-  }, [user]);
+  }, [user, fetchVendorData]); // Now includes fetchVendorData
 
-  // Handle Delete
   const handleDelete = async (id, itemType) => {
     if (!window.confirm("Are you sure you want to delete this listing? This cannot be undone.")) return;
 
@@ -110,7 +105,7 @@ const VendorDashboard = () => {
 
       if (res.ok) {
         alert("Listing deleted successfully.");
-        fetchVendorData(); // Refresh table
+        fetchVendorData();
       } else {
         alert("Failed to delete listing. Check backend routes.");
       }
@@ -119,7 +114,6 @@ const VendorDashboard = () => {
     }
   };
 
-  // Handle Edit Click
   const handleEditClick = (item) => {
     let formType = "hotel";
     if (item.itemType === "tours") formType = "tour";
