@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { BASE_URL } from "../utils/config";
 import { useNavigate } from "react-router-dom";
 
+// Helper to prevent infinite hanging
 const fetchWithTimeout = (url, options = {}) => {
   return Promise.race([
     fetch(url, options),
@@ -90,6 +91,7 @@ const VendorDashboard = () => {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (user && (user.role === "vendor" || user.role === "admin")) {
       fetchVendorData();
@@ -119,7 +121,6 @@ const VendorDashboard = () => {
 
   // Handle Edit Click
   const handleEditClick = (item) => {
-    // Map itemType back to singular for the dropdown
     let formType = "hotel";
     if (item.itemType === "tours") formType = "tour";
     if (item.itemType === "transport") formType = "transport";
@@ -128,7 +129,6 @@ const VendorDashboard = () => {
     setListingType(formType);
     setEditingId(item._id);
     
-    // Populate the form with existing data
     setNewListing({
       title: item.title || "",
       city: item.city || "",
@@ -137,7 +137,7 @@ const VendorDashboard = () => {
       price: item.price || "",
       pricePerNight: item.pricePerNight || "",
       capacity: item.capacity || "",
-      type: item.type || "", // For transport
+      type: item.type || "", 
       maxGroupSize: item.maxGroupSize || "",
       stock: item.stock || "",
       category: item.category || "",
@@ -159,8 +159,15 @@ const VendorDashboard = () => {
     if (listingType === "hotel" && (!newListing.address || !newListing.pricePerNight)) {
       return alert("Please fill in ALL Hotel fields (Address, Price per Night).");
     }
+    if (listingType === "tour" && (!newListing.address || !newListing.price || !newListing.maxGroupSize)) {
+      return alert("Please fill in ALL Tour fields (Address, Price, Group Size).");
+    }
+    if (listingType === "product" && (!newListing.price || !newListing.stock || !newListing.category)) {
+      return alert("Please fill in ALL Product fields (Price, Stock, Category).");
+    }
 
     setSaving(true);
+    
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
@@ -191,7 +198,6 @@ const VendorDashboard = () => {
         default: endpoint = "hotels";
       }
 
-      // Determine if this is a POST (create) or PUT (update)
       const method = editingId ? "PUT" : "POST";
       const url = editingId ? `${BASE_URL}/${endpoint}/${editingId}` : `${BASE_URL}/${endpoint}`;
 
@@ -268,7 +274,6 @@ const VendorDashboard = () => {
                         <td className="fw-bold">{item.title}</td>
                         <td className="fw-bold text-success">{(item.pricePerNight || item.price)?.toLocaleString()}</td>
                         <td>
-                          {/* WIRED UP THE BUTTONS */}
                           <Button onClick={() => handleEditClick(item)} size="sm" className="me-2" style={{ backgroundColor: "#f1f5f9", color: "#0f172a", border: "none" }}>Edit</Button>
                           <Button onClick={() => handleDelete(item._id, item.itemType)} size="sm" style={{ backgroundColor: "#fee2e2", color: "#dc2626", border: "none" }}>Delete</Button>
                         </td>

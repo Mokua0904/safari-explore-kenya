@@ -71,7 +71,8 @@ const TourDetails = () => {
     maxGroupSize = 0,
   } = tour || {};
 
-  const { totalRating, avgRating } = calculateAvgRating(reviews);
+  // 🚨 FIXED: Removed 'totalRating' here because it was never used.
+  const { avgRating } = calculateAvgRating(reviews);
 
   return (
     <section>
