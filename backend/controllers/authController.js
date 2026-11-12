@@ -63,6 +63,8 @@ export const login = async (req, res) => {
     res
       .cookie("accessToken", token, {
         httpOnly: true,
+        secure: true,           // Required for HTTPS (Vercel/Render)
+        sameSite: "none",       // Required for Cross-Domain cookies
         maxAge: 15 * 24 * 60 * 60 * 1000,
       })
       .status(200)
@@ -78,7 +80,7 @@ export const login = async (req, res) => {
   }
 };
 
-// Get current logged-in user (DB truth)
+// Get current logged-in user
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
