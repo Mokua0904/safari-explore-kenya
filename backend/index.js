@@ -15,28 +15,18 @@ import transportRoute from "./routes/transport.js";
 import productRoute from "./routes/product.js";
 
 const app = express();
-// Render provides a dynamic port. Fallback to 5000 for local development.
 const port = process.env.PORT || 5000;
 
-// CORS Configuration: Allow localhost AND your future Vercel frontend
+// CORS Configuration
 const corsOptions = {
   origin: [
     "http://localhost:3000",
     "http://localhost:3001",
-    "http://192.168.0.15:3000", // Your mobile testing IP
-    process.env.FRONTEND_URL // We will add this to Render later!
+    "http://192.168.0.15:3000",
+    process.env.FRONTEND_URL 
   ].filter(Boolean), 
   credentials: true,
 };
-
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-const connection = mongoose.connection;
-connection.on("error", (err) => console.log("MongoDB connection FAILED:", err.message));
-connection.once("open", () => console.log("MongoDB connection successful! (Connected to Atlas)"));
 
 app.use(express.json());
 app.use(cors(corsOptions));
@@ -56,6 +46,19 @@ app.get("/", (req, res) => {
   res.send("Safari Explore Kenya API is running!");
 });
 
+// 1. START THE SERVER IMMEDIATELY (so Render gets a response)
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
+});
+
+// 2. CONNECT TO MONGODB IN THE BACKGROUND
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log("MongoDB connection successful! (Connected to Atlas)");
+})
+.catch((err) => {
+  console.error("MongoDB connection FAILED:", err.message);
 });
