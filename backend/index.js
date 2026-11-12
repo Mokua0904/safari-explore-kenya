@@ -32,33 +32,36 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
-// Routes Middleware
-app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/tours", tourRoute);
-app.use("/api/v1/users", userRoute);
-app.use("/api/v1/review", reviewRoute);
-app.use("/api/v1/booking", bookingRoute);
-app.use("/api/v1/hotels", hotelRoute);
-app.use("/api/v1/transport", transportRoute);
-app.use("/api/v1/products", productRoute); 
-
-app.get("/", (req, res) => {
-  res.send("Safari Explore Kenya API is running!");
-});
-
-// 1. START THE SERVER IMMEDIATELY (so Render gets a response)
-app.listen(port, () => {
+// 1. Start the HTTP server FIRST so Render sees it immediately (no 502 error)
+const server = app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
-// 2. CONNECT TO MONGODB IN THE BACKGROUND
+// 2. Connect to MongoDB in the background
 mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000, // Fail fast if it can't connect
 })
 .then(() => {
   console.log("MongoDB connection successful! (Connected to Atlas)");
+  
+  // 3. ONLY mount the routes AFTER the database is connected
+  app.use("/api/v1/auth", authRoute);
+  app.use("/api/v1/tours", tourRoute);
+  app.use("/api/v1/users", userRoute);
+  app.use("/api/v1/review", reviewRoute);
+  app.use("/api/v1/booking", bookingRoute);
+  app.use("/api/v1/hotels", hotelRoute);
+  app.use("/api/v1/transport", transportRoute);
+  app.use("/api/v1/products", productRoute); 
+
+  app.get("/", (req, res) => {
+    res.send("Safari Explore Kenya API is running!");
+  });
 })
 .catch((err) => {
   console.error("MongoDB connection FAILED:", err.message);
+  // If connection fails, we still keep the server running to show the error
+  app.get("/", (req, res) => {
+    res.status(500).send("Database connection failed. Check logs.");
+  });
 });
