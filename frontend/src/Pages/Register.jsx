@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import AuthLayout from "../Components/AuthLayout";
 import { AuthContext } from "../context/AuthContext";
 import { BASE_URL } from "../utils/config";
@@ -53,7 +54,12 @@ const Register = () => {
       title="Create an Account" 
       subtitle="Join Safari Explore Kenya to start your journey."
     >
-      {error && <div className="alert alert-danger py-2" style={{ fontSize: "0.85rem" }}>{error}</div>}
+      <motion.div
+        animate={error ? { x: [-5, 5, -5, 5, 0] } : {}}
+        transition={{ duration: 0.4 }}
+      >
+        {error && <div className="alert alert-danger py-2" style={{ fontSize: "0.85rem" }}>{error}</div>}
+      </motion.div>
 
       <form onSubmit={handleSubmit}>
         <div className="input-group">
@@ -111,13 +117,14 @@ const Register = () => {
           </label>
         </div>
 
-        <button 
+        <motion.button 
           type="submit" 
           className="login-btn active w-100"
           disabled={loading}
+          whileTap={{ scale: 0.97 }}
         >
           {loading ? "Creating Account..." : "Sign Up"}
-        </button>
+        </motion.button>
       </form>
 
       <div className="signup-link">

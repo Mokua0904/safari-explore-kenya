@@ -1,15 +1,17 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import AuthLayout from "../Components/AuthLayout";
 import { AuthContext } from "../context/AuthContext";
 import { BASE_URL } from "../utils/config";
-import "../styles/auth.css"; // Ensure CSS is imported
+import "../styles/auth.css";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -40,8 +42,9 @@ const Login = () => {
         return;
       }
 
+      setSuccess(true);
       dispatch({ type: "LOGIN_SUCCESS", payload: result.data });
-      navigate("/");
+      setTimeout(() => navigate("/"), 1000);
     } catch (err) {
       setError("Network error. Please try again.");
       setLoading(false);
@@ -55,7 +58,13 @@ const Login = () => {
       title="Welcome!" 
       subtitle="Log in to Safari Explore Kenya to continue to the Super App."
     >
-      {error && <div className="alert alert-danger py-2" style={{ fontSize: "0.85rem" }}>{error}</div>}
+      {/* ERROR SHAKE ANIMATION */}
+      <motion.div
+        animate={error ? { x: [-5, 5, -5, 5, 0] } : {}}
+        transition={{ duration: 0.4 }}
+      >
+        {error && <div className="alert alert-danger py-2" style={{ fontSize: "0.85rem" }}>{error}</div>}
+      </motion.div>
 
       <div className="social-buttons">
         <button className="social-btn" type="button">
@@ -113,13 +122,15 @@ const Login = () => {
           </div>
         </div>
 
-        <button 
+        <motion.button 
           type="submit" 
           className={`login-btn ${isFormFilled ? "active" : ""}`}
-          disabled={!isFormFilled || loading}
+          disabled={!isFormFilled || loading || success}
+          whileTap={{ scale: 0.97 }}
+          style={success ? { backgroundColor: "#28a745", color: "#fff", borderColor: "#28a745" } : {}}
         >
-          {loading ? "Logging in..." : "Log in"}
-        </button>
+          {success ? "Success!" : loading ? "Logging in..." : "Log in"}
+        </motion.button>
       </form>
 
       <div className="signup-link">

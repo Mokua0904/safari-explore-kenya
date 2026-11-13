@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import AuthLayout from "../Components/AuthLayout";
 import "../styles/auth.css";
 
@@ -42,13 +43,14 @@ const ForgotPassword = () => {
           </div>
         </div>
 
-        <button 
+        <motion.button 
           type="submit" 
           className="login-btn active w-100"
           disabled={loading}
+          whileTap={{ scale: 0.97 }}
         >
           {loading ? "Sending..." : "Send Reset Link"}
-        </button>
+        </motion.button>
       </form>
 
       <div className="signup-link">
