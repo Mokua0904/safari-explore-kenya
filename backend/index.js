@@ -17,17 +17,28 @@ import productRoute from "./routes/product.js";
 const app = express();
 const port = process.env.PORT || 5000;
 
-// CORS Configuration
+// Create an array of allowed origins
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://192.168.0.15:3000",
+  "https://safari-explore-kenya.vercel.app" // Hardcoded just in case
+];
+
+// If FRONTEND_URL exists in Render, split it by comma and add to the list
+if (process.env.FRONTEND_URL) {
+  const envUrls = process.env.FRONTEND_URL.split(",");
+  envUrls.forEach(url => {
+    if (url.trim() !== "" && !allowedOrigins.includes(url.trim())) {
+      allowedOrigins.push(url.trim());
+    }
+  });
+}
+
 const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://192.168.0.15:3000",
-    process.env.FRONTEND_URL 
-  ].filter(Boolean), 
+  origin: allowedOrigins,
   credentials: true,
 };
-
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
