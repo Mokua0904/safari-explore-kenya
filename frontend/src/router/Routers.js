@@ -19,6 +19,7 @@ import BecomeVendor from "./../Pages/BecomeVendor";
 import VendorDashboard from "../Pages/VendorDashboard";
 import Account from "./../Pages/Account";
 import AdminVendors from "./../Pages/AdminVendors";
+import ForgotPassword from "./../Pages/ForgotPassword";
 
 import ProtectedRoute from "../Component/ProtectedRoute";
 
@@ -38,6 +39,7 @@ const Routers = () => {
       <Route path="/transport" element={<Transport />} />
       <Route path="/shop" element={<Shop />} />
       <Route path="/become-vendor" element={<BecomeVendor />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
 
       {/* PROTECTED ROUTES */}
       <Route
