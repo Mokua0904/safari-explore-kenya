@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import "../styles/login.css"; 
-import userIcon from "../assest/images/user.png";
+import AuthLayout from "../Components/AuthLayout";
+import "../styles/auth.css";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +13,7 @@ const ForgotPassword = () => {
     setLoading(true);
     setMessage(null);
 
-    // Simulate an API call for now
+    // Simulate API call for now
     setTimeout(() => {
       setMessage("If an account with that email exists, a password reset link has been sent.");
       setLoading(false);
@@ -23,55 +21,40 @@ const ForgotPassword = () => {
   };
 
   return (
-    <section>
-      <Container>
-        <Row>
-          <Col lg="6" className="m-auto">
-            <motion.div 
-              className="login__container p-5"
-              style={{ backgroundColor: "#fff", borderRadius: "15px", boxShadow: "0 10px 30px rgba(0,0,0,0.1)", display: "block" }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="login__form" style={{ width: "100%", padding: "0" }}>
-                <div className="user text-center mb-4">
-                  <img src={userIcon} alt="" style={{ width: "60px" }} />
-                </div>
-                <h2 className="text-center mb-3">Reset Password</h2>
-                <p className="text-center text-muted mb-4">
-                  Enter your email and we will send you a link to reset your password.
-                </p>
+    <AuthLayout 
+      title="Reset Password" 
+      subtitle="Enter your email and we will send you a link to reset your password."
+    >
+      {message && <div className="alert alert-success py-2" style={{ fontSize: "0.85rem" }}>{message}</div>}
 
-                {message && <div className="alert alert-success">{message}</div>}
+      <form onSubmit={handleSubmit}>
+        <div className="input-group">
+          <label htmlFor="email">Email</label>
+          <div className="input-wrapper">
+            <input 
+              type="email" 
+              id="email" 
+              placeholder="Enter your registered email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
+          </div>
+        </div>
 
-                <Form onSubmit={handleSubmit}>
-                  <FormGroup className="mb-4">
-                    <input
-                      type="email"
-                      placeholder="Enter your registered email"
-                      className="form-control"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      style={{ padding: "12px", borderRadius: "8px", border: "1px solid #ddd", width: "100%" }}
-                    />
-                  </FormGroup>
-                  
-                  <Button className="btn secondary__btn auth__btn w-100" type="submit" disabled={loading}>
-                    {loading ? "Sending..." : "Send Reset Link"}
-                  </Button>
-                </Form>
-                
-                <p className="text-center mt-4">
-                  Remember your password? <Link to="/login">Back to Login</Link>
-                </p>
-              </div>
-            </motion.div>
-          </Col>
-        </Row>
-      </Container>
-    </section>
+        <button 
+          type="submit" 
+          className="login-btn active w-100"
+          disabled={loading}
+        >
+          {loading ? "Sending..." : "Send Reset Link"}
+        </button>
+      </form>
+
+      <div className="signup-link">
+        Remember your password? <Link to="/login">Back to Login</Link>
+      </div>
+    </AuthLayout>
   );
 };
 

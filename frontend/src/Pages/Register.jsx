@@ -1,31 +1,28 @@
 import React, { useState, useContext } from "react";
-import { Container, Row, Col, Form, FormGroup, Button } from "reactstrap";
-import "../styles/login.css";
 import { Link, useNavigate } from "react-router-dom";
-
-import registerImg from "../assest/images/login.png";
-import userIcon from "../assest/images/user.png";
-
+import AuthLayout from "../Components/AuthLayout";
 import { AuthContext } from "../context/AuthContext";
 import { BASE_URL } from "../utils/config";
+import "../styles/auth.css";
 
 const Register = () => {
-  const [credentials, setCredentials] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
+  const [credentials, setCredentials] = useState({ username: "", email: "", password: "" });
   const [wantsVendor, setWantsVendor] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+    setError(null);
   };
 
-  const handleClick = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     try {
       const res = await fetch(`${BASE_URL}/auth/register`, {
@@ -37,88 +34,96 @@ const Register = () => {
       const result = await res.json();
 
       if (!res.ok) {
-        return alert(result.message || "Registration failed");
+        setError(result.message || "Registration failed.");
+        setLoading(false);
+        return;
       }
 
       alert("Account created successfully! Please log in.");
       dispatch({ type: "REGISTER_SUCCESS" });
       navigate("/login");
     } catch (err) {
-      alert("Network error. Please try again.");
+      setError("Network error. Please try again.");
+      setLoading(false);
     }
   };
 
   return (
-    <section>
-      <Container>
-        <Row>
-          <Col lg="8" className="m-auto">
-            <div className="login__container d-flex justify-content-between">
-              <div className="login__img">
-                <img src={registerImg} alt="" />
-              </div>
+    <AuthLayout 
+      title="Create an Account" 
+      subtitle="Join Safari Explore Kenya to start your journey."
+    >
+      {error && <div className="alert alert-danger py-2" style={{ fontSize: "0.85rem" }}>{error}</div>}
 
-              <div className="login__form">
-                <div className="user">
-                  <img src={userIcon} alt="" />
-                </div>
-                <h2>Register</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="input-group">
+          <label htmlFor="username">Username</label>
+          <div className="input-wrapper">
+            <input 
+              type="text" 
+              id="username" 
+              placeholder="e.g. SafariExplorer" 
+              value={credentials.username}
+              onChange={handleChange}
+              required 
+            />
+          </div>
+        </div>
 
-                <Form onSubmit={handleClick}>
-                  <FormGroup>
-                    <input
-                      type="text"
-                      placeholder="Username"
-                      id="username"
-                      onChange={handleChange}
-                      required
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      id="email"
-                      onChange={handleChange}
-                      required
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      id="password"
-                      onChange={handleChange}
-                      required
-                    />
-                  </FormGroup>
+        <div className="input-group">
+          <label htmlFor="email">Email</label>
+          <div className="input-wrapper">
+            <input 
+              type="email" 
+              id="email" 
+              placeholder="you@example.com" 
+              value={credentials.email}
+              onChange={handleChange}
+              required 
+            />
+          </div>
+        </div>
 
-                  <div className="form-check mt-3 mb-3">
-                    <input
-                      type="checkbox"
-                      id="wantsVendor"
-                      className="form-check-input"
-                      checked={wantsVendor}
-                      onChange={(e) => setWantsVendor(e.target.checked)}
-                    />
-                    <label htmlFor="wantsVendor" className="form-check-label small">
-                      I want to become a vendor (hotel / safari / transport)
-                    </label>
-                  </div>
+        <div className="input-group">
+          <label htmlFor="password">Password</label>
+          <div className="input-wrapper">
+            <input 
+              type="password" 
+              id="password" 
+              placeholder="Create a strong password" 
+              value={credentials.password}
+              onChange={handleChange}
+              required 
+            />
+          </div>
+        </div>
 
-                  <Button className="btn secondary__btn auth__btn" type="submit">
-                    Create Account
-                  </Button>
-                </Form>
-                <p>
-                  Already have an account? <Link to="/login">Login</Link>
-                </p>
-              </div>
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </section>
+        <div className="form-check mb-3">
+          <input 
+            type="checkbox" 
+            id="wantsVendor" 
+            className="form-check-input" 
+            checked={wantsVendor}
+            onChange={(e) => setWantsVendor(e.target.checked)}
+          />
+          <label htmlFor="wantsVendor" className="form-check-label small">
+            I want to become a vendor (hotel, safari, or transport)
+          </label>
+        </div>
+
+        <button 
+          type="submit" 
+          className="login-btn active w-100"
+          disabled={loading}
+        >
+          {loading ? "Creating Account..." : "Sign Up"}
+        </button>
+      </form>
+
+      <div className="signup-link">
+        Already have an account? <Link to="/login">Log in</Link>
+      </div>
+    </AuthLayout>
   );
 };
 
